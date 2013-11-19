@@ -19,16 +19,20 @@ irc.send(bytes('JOIN '+ channel +'\n','UTF-8'))  							#join the chan
 irc.send(bytes('PRIVMSG #swookbot :Successfully joined the channel\r\n','UTF-8'))      				
 
 while 1:    				#puts it in a loop
-   text=irc.recv( 4096 ) 	#receive the text
-   print(text)   			#print text to console
-
-   if text.find(bytes('PING','UTF-8')) != -1:                          #check if 'PING' is found
-      irc.send(bytes('PONG \r\n', 'UTF-8'))
-	  #irc.send(bytes('PONG ' + text.split() [1] + '\r\n', 'UTF-8'))    #returns 'PONG' back to the server (prevents pinging out!
+	text=irc.recv( 4096 ) 	#receive the text
+	print(text)   			#print text to console
+   
+	if text.find(bytes('PING','UTF-8')) != -1: #check if 'PING' is found
+		irc.send(bytes('PONG \r\n', 'UTF-8'))  #returns 'PONG' back to the server (prevents pinging out!
 
 	if text.find(bytes('?swookbot ping', 'UTF-8')) != -1:
-		irc.send(bytes('PRIVMSG #swookbot :pong', 'UTF-8'))
+		irc.send(bytes('PRIVMSG #swookbot :pong\r\n', 'UTF-8'))
 	
-	if text.find(bytes('?swookbot quit', 'UTF-8' )) != -1:
-		irc.send(bytes('PRIVMSG #swookbot  :Quitting IRC', 'UTF-8'))
-		irc.send(bytes('QUIT\r\n')
+	if text.find(bytes('?swookbot leave', 'UTF-8' )) != -1:
+		irc.send(bytes('PRIVMSG #swookbot  :Leaving channel \r\n', 'UTF-8'))
+		irc.send(bytes('QUIT\r\n','UTF-8'))
+	
+	if text.find(bytes('?swookbot die', 'UTF-8' )) != -1:
+		irc.send(bytes('PRIVMSG #swookbot :Shutting down \r\n', 'UTF-8'))
+		irc.send(bytes('QUIT\r\n' , 'UTF-8'))
+		break
