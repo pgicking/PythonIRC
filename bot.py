@@ -4,13 +4,34 @@
 
 import socket
 import sys
+import ConfigParser
+
+Config = ConfigParser.ConfigParser()
+Config.read("config.txt")
 
 with open("test.txt", "wt") as out_file:
-        out_file.write("This stuff goes out\nout!")
+        out_file.write("ttttttThis stuff goes out\nout!")
+
+#Stolen from https://wiki.python.org/moin/ConfigParserExamples
+def ConfigSectionMap(section):
+       dict1 = {}
+       options = Config.options(section)
+       for option in options:
+           try:
+               dict1[option] = Config.get(section,option)
+               if dict1[option] == -1:
+                   DebugPrint("skip: %s" % option)
+           except:
+               print("exception on %s!" % option)
+               dict1[option] = None
+       return dict1
+        
 
 server = 'iss.cat.pdx.edu'       #settings
-channel = '#swookbot'
-botnick = 'swookbot'
+channel = ConfigSectionMap("SectionOne")['channel']
+botnick = ConfigSectionMap("SectionOne")['botnick']
+
+
 
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 					#defines the socket
 print('connecting to:'+server)
