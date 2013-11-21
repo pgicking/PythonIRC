@@ -1,0 +1,4 @@
+#config file for boy.py
+[SectionOne]
+channel: #swookbot
+botnick: swookboot
