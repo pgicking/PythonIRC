@@ -5,40 +5,43 @@
 import socket
 import sys
 
+with open("test.txt", "wt") as out_file:
+        out_file.write("This stuff goes out\nout!")
+
 server = 'iss.cat.pdx.edu'       #settings
 channel = '#swookbot'
 botnick = 'swookbot'
 
-irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 									#defines the socket
+irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 					#defines the socket
 print('connecting to:'+server)
-irc.connect((server, 6667))                                                 				#connects to the server
-irc.send(bytes('USER '+ botnick +' '+ botnick +' '+ botnick +' :Swooks Bot\n','UTF-8')) 	#user authentication
-irc.send(bytes('NICK '+ botnick +'\n','UTF-8'))                            					#sets nick
-#irc.send("PRIVMSG nickserv :iNOOPE\r\n")    												#auth
-irc.send(bytes('JOIN '+ channel +'\n','UTF-8'))  											#join the chan
-irc.send(bytes('PRIVMSG #swookbot :Successfully joined the channel\r\n','UTF-8'))      				
+irc.connect((server, 6667))                                    				#connects to the server
+irc.send('USER '+ botnick +' '+ botnick +' '+ botnick +' :Swooks Bot\n')    #user authentication
+irc.send('NICK '+ botnick +'\n')                            				#sets nick
+#irc.send("PRIVMSG nickserv :iNOOPE\r\n")    								#auth
+irc.send('JOIN '+ channel +'\n')  											#join the chan
+irc.send('PRIVMSG #swookbot :Successfully joined the channel\r\n')      				
 
 while 1:    				#puts it in a loop
 	text=irc.recv( 4096 ) 	#receive the text
 	print(text)   			#print text to console
    
-	if text.find(bytes('PING','UTF-8')) != -1: #check if 'PING' is found
-		irc.send(bytes('PONG \r\n', 'UTF-8'))  #returns 'PONG' back to the server (prevents pinging out!
+	if text.find('PING') != -1: #check if 'PING' is found
+		irc.send('PONG \r\n')   #returns 'PONG' back to the server (prevents pinging out!
 
-	if text.find(bytes( botnick + ': ping', 'UTF-8')) != -1:
-		irc.send(bytes('PRIVMSG ' + channel + ' :pong\r\n', 'UTF-8'))
+	if text.find( botnick + ': ping') != -1:
+		irc.send('PRIVMSG ' + channel + ' :pong\r\n')
 	
-	if text.find(bytes( botnick + ': leave', 'UTF-8' )) != -1:
-		irc.send(bytes('PRIVMSG ' + channel + '  :Leaving channel \r\n', 'UTF-8'))
-		irc.send(bytes('QUIT\r\n','UTF-8'))
+	if text.find( botnick + ': leave') != -1:
+		irc.send('PRIVMSG ' + channel + '  :Leaving channel \r\n')
+		irc.send('QUIT\r\n')
 	
-	if text.find(bytes( botnick + ': help', 'UTF-8' )) != -1:
-		irc.send(bytes('PRIVMSG ' + channel + ' :Current commands: ping, leave, die, help\r\n', 'UTF-8'))
+	if text.find( botnick + ': help') != -1:
+		irc.send('PRIVMSG ' + channel + ' :Current commands: ping, leave, die, help\r\n')
 		
-	if text.find(bytes( botnick + ': source', 'UTF-8' )) != -1:
-		irc.send(bytes('PRIVMSG ' + channel + ' :My source is at: https://github.com/pgicking/PythonIRC \r\n', 'UTF-8'))
+	if text.find( botnick + ': source') != -1:
+		irc.send('PRIVMSG ' + channel + ' :My source is at: https://github.com/pgicking/PythonIRC \r\n')
 	
-	if text.find(bytes(botnick + ': die', 'UTF-8' )) != -1:
-		irc.send(bytes('PRIVMSG ' + channel + ' :Shutting down \r\n', 'UTF-8'))
-		irc.send(bytes('QUIT\r\n' , 'UTF-8'))
+	if text.find(botnick + ': die') != -1:
+		irc.send('PRIVMSG ' + channel + ' :Shutting down \r\n')
+		irc.send('QUIT\r\n')
 		break
