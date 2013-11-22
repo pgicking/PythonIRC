@@ -1,6 +1,8 @@
 #Peter Gicking, 11/18/13 
 #irc handle: swook
 
+#run command as python boy.py "catsonly"
+
 #TODO: Get nick of someone talking to bot
 #TODO: re-write everything with twisted library
 #TODO: Get X is Y command to work
@@ -9,6 +11,9 @@ import socket
 import sys
 import ConfigParser
 import re
+import sys
+import ssl
+
 
 Config = ConfigParser.ConfigParser()
 Config.read("config.txt")
@@ -34,19 +39,24 @@ def ConfigSectionMap(section):
 server = 'iss.cat.pdx.edu'       #settings
 channel = ConfigSectionMap("SectionOne")['channel']                         #Sets channel from config.txt
 botnick = ConfigSectionMap("SectionOne")['botnick']                         #sets botnick from config.txt
+channelkey = str(sys.argv[1])                                               #Set the passkey in arguments so its not publically availible in github
 
 
 def send(text):
     irc.send('PRIVMSG ' + channel + ' :' + text + '\r\n')
 
+socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                  #defines the sockets
 
-irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                     #defines the socket
+
+#irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                     #defines the socket
 print('connecting to:'+server)
-irc.connect((server, 6667))                                                 #connects to the server
+socket.connect((server,6697))                                               #Connects to the server
+irc = ssl.wrap_socket(socket)
 irc.send('USER '+ botnick +' '+ botnick +' '+ botnick +' :Swooks Bot\n')    #user authentication
 irc.send('NICK '+ botnick +'\n')                                            #sets nick
-irc.send('JOIN '+ channel +'\n')                                            #join the chan
-irc.send('PRIVMSG ' + botnick + ' :Successfully joined the channel\r\n')                      
+#irc.send('JOIN ' + channel + '\n')
+irc.send('JOIN '+ channel + ' ' + channelkey + '\n')                        #join the chan
+send('Hello!')                                                              #Opening message
 
 while 1:                    #puts it in a loop
     text=irc.recv( 4096 )   #receive the text
@@ -56,7 +66,7 @@ while 1:                    #puts it in a loop
         irc.send('PONG \r\n')   #returns 'PONG' back to the server (prevents pinging out!
 
     if text.find( botnick + ': ping') != -1:
-        send('ping')
+        send('p0ng')
 
 #    if text.find( botnick + ': (.*)  is also (.*)' ) != -1:
 #        irc.send( 'You said ' + nick + ' is ' + info + '\r\n') 
