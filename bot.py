@@ -1,7 +1,7 @@
 #Peter Gicking, 11/18/13 
 #irc handle: swook
 
-#run command as python boy.py "catsonly"
+#run command as python boy.py "password"
 
 #TODO: Get nick of someone talking to bot
 #TODO: re-write everything with twisted library
