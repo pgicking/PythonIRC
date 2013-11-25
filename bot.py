@@ -1,11 +1,7 @@
 #Peter Gicking, 11/18/13 
 #irc handle: swook
 
-<<<<<<< HEAD
 #run command as python boy.py "channel key"
-=======
-#run command as python boy.py "password"
->>>>>>> 398485bcf8c853d0843ef44699f94908fce82084
 
 #TODO: Get nick of someone talking to bot
 #TODO: re-write everything with twisted library
@@ -17,15 +13,12 @@ import ConfigParser
 import re
 import sys
 import ssl
-
+import pickle
 
 Config = ConfigParser.ConfigParser()
 Config.read("config.txt")
 
 
-
-#with open("test.txt", "wt") as out_file:
- #       out_file.write("ttttttThis stuff goes out\nout!")
 
 #borrowed from https://wiki.python.org/moin/ConfigParserExamples
 def ConfigSectionMap(section):
@@ -51,13 +44,23 @@ channelkey = str(sys.argv[1])                                               #Set
 
 
 def addalias(s1,s2):
-    print s1 + ' ' + s2
-    with open(NameFile, 'r+') as fp:
-        for line in fp:
-            if line.find(s1):
-                fp.write(' or ' + s2)
-            else:
-                fp.write('\n' + s1 + ' is ' + s2)
+    print s1 + ' ' + s1
+    null = { "blah"}
+    pickle.dump(null,open(NameFile,"wb"))
+    with open(NameFile, 'rb+') as fp:
+#        content = fp.readlines()
+        content = pickle.load(fp)
+        print content
+        if s1 in content:                                  #If s1 exists
+            for n,i in enumerate(content):                                  #enum and find it
+                if i == s1:                                                 #if its found
+                    string = a[n]                                           #read it into 'string'
+                    string = string + ' or ' + s2                           #append to string
+                    a[n] = string                                           #replace with new string
+        else:                                                               
+            content.add(s1 + ' is ' + s2)
+        pickle.dump(content,fp)
+#        fp.write(content)                                               #write to the file
 
 
 
