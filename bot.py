@@ -48,7 +48,7 @@ channelkey = str(sys.argv[1])                                               #Set
 
 def addalias(s1,s2):
     print s1 + ' ' + s2
-    with open(NameFile, 'a+') as fp:
+    with open(NameFile, 'r+') as fp:
         for line in fp:
             if line.find(s1):
                 fp.write(' or ' + s2)
@@ -79,7 +79,7 @@ while 1:                    #puts it in a loop
     if text.find('PING') != -1: #check if 'PING' is found
         irc.send('PONG \r\n')   #returns 'PONG' back to the server (prevents pinging out!
 
-    if text.find( botnick + ': ping') != -1:
+    if text.find( botnick + ': ping') != -1:                #Returns p0ng
         send('p0ng')
 
     m = re.search(r'set (.*) to (.*)',text)
@@ -89,14 +89,14 @@ while 1:                    #puts it in a loop
         send('You said ' + f1 + ' to ' + f2)
         addalias(f1,f2)
 
-    if text.find( botnick + ': help') != -1:
+    if text.find( botnick + ': help') != -1:                #Returns list of commands
         send('Current commands: ping, source, die, help')
         
-    if text.find( botnick + ': source') != -1:
+    if text.find( botnick + ': source') != -1:              #Returns link to source
         send('My source is at: https://github.com/pgicking/PythonIRC')
     
-    if text.find(botnick + ': die') != -1:
-        if text.find('swook') != -1:
+    if text.find(botnick + ': die') != -1:                  #Kills bot
+        if text.find('swook') != -1:                        #Only supposed to work for swook but its not yet working
             send('Shutting down')
             irc.send('QUIT\r\n')
             break
