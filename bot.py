@@ -1,7 +1,7 @@
 #Peter Gicking, 11/18/13 
 #irc handle: swook
 
-#run command as python boy.py "catsonly"
+#run command as python boy.py "channel key"
 
 #TODO: Get nick of someone talking to bot
 #TODO: re-write everything with twisted library
@@ -18,10 +18,12 @@ import ssl
 Config = ConfigParser.ConfigParser()
 Config.read("config.txt")
 
-with open("test.txt", "wt") as out_file:
-        out_file.write("ttttttThis stuff goes out\nout!")
 
-#Stolen from https://wiki.python.org/moin/ConfigParserExamples
+
+#with open("test.txt", "wt") as out_file:
+ #       out_file.write("ttttttThis stuff goes out\nout!")
+
+#borrowed from https://wiki.python.org/moin/ConfigParserExamples
 def ConfigSectionMap(section):
        dict1 = {}
        options = Config.options(section)
@@ -33,13 +35,26 @@ def ConfigSectionMap(section):
            except:
                print("exception on %s!" % option)
                dict1[option] = None
+       print dict1
        return dict1
         
 
-server = 'iss.cat.pdx.edu'       #settings
+server = 'iss.cat.pdx.edu'                                                  #settings
+NameFile = ConfigSectionMap("SectionOne")['namefile']                       #Sets the name of the text file that holds aliases in config.txt
 channel = ConfigSectionMap("SectionOne")['channel']                         #Sets channel from config.txt
 botnick = ConfigSectionMap("SectionOne")['botnick']                         #sets botnick from config.txt
 channelkey = str(sys.argv[1])                                               #Set the passkey in arguments so its not publically availible in github
+
+
+def addalias(s1,s2):
+    print s1 + ' ' + s2
+    with open(NameFile, 'a+') as fp:
+        for line in fp:
+            if line.find(s1):
+                fp.write(' or ' + s2)
+            else:
+                fp.write('\n' + s1 + ' is ' + s2)
+
 
 
 def send(text):
@@ -48,7 +63,6 @@ def send(text):
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                  #defines the sockets
 
 
-#irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)                     #defines the socket
 print('connecting to:'+server)
 socket.connect((server,6697))                                               #Connects to the server
 irc = ssl.wrap_socket(socket)
@@ -68,8 +82,12 @@ while 1:                    #puts it in a loop
     if text.find( botnick + ': ping') != -1:
         send('p0ng')
 
-#    if text.find( botnick + ': (.*)  is also (.*)' ) != -1:
-#        irc.send( 'You said ' + nick + ' is ' + info + '\r\n') 
+    m = re.search(r'set (.*) to (.*)',text)
+    if m:
+        f1 = m.group(1)
+        f2 = m.group(2)
+        send('You said ' + f1 + ' to ' + f2)
+        addalias(f1,f2)
 
     if text.find( botnick + ': help') != -1:
         send('Current commands: ping, source, die, help')
@@ -78,6 +96,9 @@ while 1:                    #puts it in a loop
         send('My source is at: https://github.com/pgicking/PythonIRC')
     
     if text.find(botnick + ': die') != -1:
-        send('Shutting down')
-        irc.send('QUIT\r\n')
-        break
+        if text.find('swook') != -1:
+            send('Shutting down')
+            irc.send('QUIT\r\n')
+            break
+        else:
+            send('You\'re not my real dad!')
