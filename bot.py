@@ -1,7 +1,11 @@
 #Peter Gicking, 11/18/13 
 #irc handle: swook
 
+<<<<<<< HEAD
 #run command as python boy.py "channel key"
+=======
+#run command as python boy.py "password"
+>>>>>>> 398485bcf8c853d0843ef44699f94908fce82084
 
 #TODO: Get nick of someone talking to bot
 #TODO: re-write everything with twisted library
